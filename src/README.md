@@ -40,11 +40,49 @@ A FastAPI application that enables Slalom consultants to register their capabili
 | POST   | `/capabilities/{capability_name}/register?email=consultant@slalom.com` | Register consultant for a capability                     |
 | DELETE | `/capabilities/{capability_name}/unregister?email=consultant@slalom.com` | Unregister consultant from a capability              |
 
+## Data Management
+
+### Capabilities Configuration
+
+Capabilities are now stored in `data/capabilities.json` for easy maintenance by practice leads. This JSON file contains all capability definitions and can be updated without modifying application code.
+
+**To add or modify capabilities:**
+
+1. Edit `data/capabilities.json` in the project root
+2. Follow the existing JSON structure for each capability:
+   - `description`: Clear description of the consulting capability
+   - `practice_area`: One of "Strategy", "Technology", or "Operations"  
+   - `skill_levels`: Array of available skill levels
+   - `certifications`: Array of relevant certifications
+   - `industry_verticals`: Array of applicable industry sectors
+   - `capacity`: Available hours per week across the team
+   - `consultants`: Array of consultant emails currently registered
+
+**Example capability structure:**
+```json
+{
+  "New Capability Name": {
+    "description": "Description of the consulting capability",
+    "practice_area": "Technology",
+    "skill_levels": ["Emerging", "Proficient", "Advanced", "Expert"],
+    "certifications": ["Relevant Cert 1", "Relevant Cert 2"],
+    "industry_verticals": ["Healthcare", "Financial Services"],
+    "capacity": 30,
+    "consultants": []
+  }
+}
+```
+
+**Important Notes:**
+- The application loads capabilities at startup, so restart the server after making changes
+- Ensure valid JSON format to prevent loading errors
+- If the JSON file is missing or malformed, the application will start with an empty capabilities list
+
 ## Data Model
 
 The application uses a consulting-focused data model:
 
-1. **Capabilities** - Uses capability name as identifier:
+1. **Capabilities** - Uses capability name as identifier (stored in `data/capabilities.json`):
    - Description of the consulting capability
    - Skill levels (Emerging, Proficient, Advanced, Expert)
    - Practice area (Strategy, Technology, Operations)
@@ -52,16 +90,11 @@ The application uses a consulting-focused data model:
    - Required certifications
    - List of consultant emails registered
    - Available capacity (hours per week)
-   - Geographic location preferences
 
 2. **Consultants** - Uses email as identifier:
-   - Name
-   - Practice area
-   - Skill level
-   - Certifications
-   - Availability
-
-All data is currently stored in memory for this learning exercise. In a production environment, this would be backed by a robust database system.
+   - Registered through API endpoints
+   - Associated with one or more capabilities
+   - Managed through registration/unregistration endpoints
 
 ## Future Enhancements
 
